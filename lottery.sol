@@ -13,8 +13,12 @@ contract Lottery {
         players.push(payable(msg.sender));
     }
 
-    function getBalance() public view returns(uint) {
+    modifier onlyManager() {
         require(msg.sender == manager);
+        _;
+    }
+
+    function getBalance() public onlyManager view returns(uint) {
         return address(this).balance;
     }
 
@@ -22,8 +26,7 @@ contract Lottery {
         return uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, players.length)));
     }
 
-    function pickWinner() public {
-        require(msg.sender == manager);
+    function pickWinner() public onlyManager {
         require(players.length >= 3);
 
         uint r = random();
